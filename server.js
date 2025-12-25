@@ -202,6 +202,7 @@ app.post('/api/create-payment', async (req, res) => {
       redirectUrl: `${APP_URL}/payment/return?order_id=${orderId || ''}&return_url=${encodeURIComponent(returnUrl)}`,
       webhookUrl: `${APP_URL}/webhook/mollie`,
       method: 'creditcard',
+      locale: 'es_ES',
       metadata: { order_id: orderId || '', customer_email: customerData.email, customer_name: `${customerData.firstName} ${customerData.lastName}` }
     };
 
