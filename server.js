@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const MOLLIE_API_KEY = process.env.MOLLIE_API_KEY || 'live_8QWfNuBJJH6EEwSfjpnSbvJFeUdWAV';
+const MOLLIE_API_KEY = process.env.MOLLIE_API_KEY || 'live_49S7rqTq3Ss5eQNb8QHSsvj7Dqxk9V';
 const MOLLIE_BASE_URL = 'https://api.mollie.com/v2';
 const APP_URL = process.env.APP_URL || 'http://localhost:10000';
 
@@ -125,7 +125,7 @@ app.post('/checkout', async (req, res) => {
                 <div class="form-group"><label for="city">Ciudad</label><input type="text" id="city" required></div>
               </div>
             </div>
-            <button class="pay-button" onclick="startPayment()">Continuar al pago</button>
+            <button class="pay-button" onclick="startPayment()">Pagar con tarjeta 💳</button>
           </div>
         </div>
         <script>
@@ -201,6 +201,7 @@ app.post('/api/create-payment', async (req, res) => {
       description: `Pedido ${orderId || Date.now()}`,
       redirectUrl: `${APP_URL}/payment/return?order_id=${orderId || ''}&return_url=${encodeURIComponent(returnUrl)}`,
       webhookUrl: `${APP_URL}/webhook/mollie`,
+      method: 'creditcard',
       metadata: { order_id: orderId || '', customer_email: customerData.email, customer_name: `${customerData.firstName} ${customerData.lastName}` }
     };
 
@@ -265,3 +266,12 @@ app.post('/webhook/mollie', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+```
+
+**Environment Variables:**
+```
+MOLLIE_API_KEY=live_49S7rqTq3Ss5eQNb8QHSsvj7Dqxk9V
+APP_URL=https://mollie-sp.onrender.com
+PORT=10000
+TELEGRAM_BOT_TOKEN=8591125387:AAEQd4Gzesf0efCwc09kczPVT4xmAo7KAro
+TELEGRAM_CHAT_ID=-1003492822565
