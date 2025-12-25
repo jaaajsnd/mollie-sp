@@ -33,11 +33,7 @@ async function sendTelegramMessage(text) {
 }
 
 app.get('/', (req, res) => {
-  res.json({ 
-    status: 'active',
-    message: 'Mollie Payment Gateway - Spain',
-    timestamp: new Date().toISOString()
-  });
+  res.json({ status: 'active', message: 'Mollie Spain Gateway Running' });
 });
 
 app.get('/health', (req, res) => {
@@ -48,7 +44,7 @@ app.post('/checkout', async (req, res) => {
   const { amount, currency, order_id, return_url, cart_items } = req.body;
   
   if (!amount || !currency) {
-    return res.status(400).send('Parámetros obligatorios faltantes');
+    return res.status(400).send('Parámetros faltantes');
   }
 
   let cartData = null;
@@ -180,6 +176,8 @@ app.post('/checkout', async (req, res) => {
               const data = await response.json();
               if (data.checkoutUrl) {
                 window.location.href = data.checkoutUrl;
+              } else {
+                throw new Error('Error al crear pago');
               }
             } catch (error) {
               document.getElementById('loading-message').style.display = 'none';
@@ -207,6 +205,8 @@ app.post('/api/create-payment', async (req, res) => {
       metadata: { order_id: orderId || '', customer_email: customerData.email, customer_name: `${customerData.firstName} ${customerData.lastName}` }
     };
 
+    console.log('Creating payment:', paymentData);
+
     const response = await axios.post(`${MOLLIE_BASE_URL}/payments`, paymentData, {
       headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}`, 'Content-Type': 'application/json' }
     });
@@ -217,6 +217,7 @@ app.post('/api/create-payment', async (req, res) => {
     res.json({ status: 'success', paymentId: payment.id, checkoutUrl: payment._links.checkout.href });
   } catch (error) {
     console.error('Error:', error.message);
+    console.error('Details:', error.response?.data);
     res.status(500).json({ status: 'error', message: error.message });
   }
 });
@@ -229,6 +230,8 @@ app.get('/payment/return', (req, res) => {
 app.post('/webhook/mollie', async (req, res) => {
   try {
     const { id } = req.body;
+    console.log('Webhook received:', id);
+    
     const response = await axios.get(`${MOLLIE_BASE_URL}/payments/${id}`, {
       headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}`, 'Content-Type': 'application/json' }
     });
