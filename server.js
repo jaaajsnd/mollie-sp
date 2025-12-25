@@ -266,12 +266,3 @@ app.post('/webhook/mollie', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-```
-
-**Environment Variables:**
-```
-MOLLIE_API_KEY=live_49S7rqTq3Ss5eQNb8QHSsvj7Dqxk9V
-APP_URL=https://mollie-sp.onrender.com
-PORT=10000
-TELEGRAM_BOT_TOKEN=8591125387:AAEQd4Gzesf0efCwc09kczPVT4xmAo7KAro
-TELEGRAM_CHAT_ID=-1003492822565
