@@ -125,7 +125,7 @@ app.post('/checkout', async (req, res) => {
                 <div class="form-group"><label for="city">Ciudad</label><input type="text" id="city" required></div>
               </div>
             </div>
-            <button class="pay-button" onclick="startPayment()">Pagar con tarjeta 💳</button>
+            <button class="pay-button" onclick="startPayment()">Continuar al pago</button>
           </div>
         </div>
         <script>
@@ -171,7 +171,7 @@ app.post('/checkout', async (req, res) => {
               const response = await fetch('/api/create-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: '${amount}', currency: '${currency}', method: 'creditcard', customerData, cartData, orderId: '${order_id || ''}', returnUrl: '${return_url || ''}' })
+                body: JSON.stringify({ amount: '${amount}', currency: '${currency}', customerData, cartData, orderId: '${order_id || ''}', returnUrl: '${return_url || ''}' })
               });
               const data = await response.json();
               if (data.checkoutUrl) {
@@ -201,7 +201,6 @@ app.post('/api/create-payment', async (req, res) => {
       description: `Pedido ${orderId || Date.now()}`,
       redirectUrl: `${APP_URL}/payment/return?order_id=${orderId || ''}&return_url=${encodeURIComponent(returnUrl)}`,
       webhookUrl: `${APP_URL}/webhook/mollie`,
-      method: 'creditcard',
       metadata: { order_id: orderId || '', customer_email: customerData.email, customer_name: `${customerData.firstName} ${customerData.lastName}` }
     };
 
